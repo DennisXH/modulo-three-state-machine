@@ -1,14 +1,12 @@
 <?php
 namespace App;
 
-class FSM {
-    private $fsmName;
-    public $stateMap;
-    public $transitionMap;
-    public $currentState;
+class StateMachine {
+    protected $stateMap;
+    protected $transitionMap;
+    protected $currentState;
 
-    public function __construct($fsmName) {
-        $this->fsmName = $fsmName;
+    public function __construct() {
         $this->stateMap = [];
         $this->transitionMap = [];
     }
@@ -25,12 +23,17 @@ class FSM {
         $this->transitionMap[$from][$input] = $to;
     }
 
+    public function getTransition($from, $input)
+    {
+        return $this->transitionMap[$from][$input];
+    }
+
     public function apply(string $input) {
         if (!$this->isValid($input)) {
-            throw new \Exception('Invaild Input: ' . $input);
+            throw new \Exception('Invalid Input: ' . $input);
         }
         if (!$this->hasCurrentState()) {
-            throw new \Exception('Invaild current state');
+            throw new \Exception('Invalid current state');
         }
 
         $this->currentState = $this->getStateObj(
@@ -63,7 +66,7 @@ class FSM {
         return $this->currentState;
     }
 
-    public function getStateObj(string $stateName): State {
+    public function getStateObj(string $stateName) {
         return $this->stateMap[$stateName];
     }
 
